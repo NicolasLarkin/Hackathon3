@@ -49,7 +49,7 @@ class PostViewSet(ModelViewSet):
     #     serializer = CommentSerializer(instance=comments, many=True)
     #     return Response(serializer.data, status=200)
 
-    @action(['GET'], detail=True)
+    @action(['POST'], detail=True)
     def likes(self):
         post = self.get_object()
         likes = post.likes.all()

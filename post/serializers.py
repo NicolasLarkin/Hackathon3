@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from category.models import Category
 from .models import Post
+from comment.serializers import CommentSerializer
 
 
 class PostImageSerializer(serializers.ModelSerializer):
@@ -12,11 +13,11 @@ class PostImageSerializer(serializers.ModelSerializer):
 class PostListSerializer(serializers.ModelSerializer):
     owner_username = serializers.ReadOnlyField(source='owner.username')
     category_name = serializers.ReadOnlyField(source='category.name')
-    images = PostImageSerializer(many=True)
+    # images = PostImageSerializer(many=True)
 
     class Meta:
         model = Post
-        fields = ('id', 'title', 'owner', 'owner_username', 'category', 'category_name', 'preview', 'images')
+        fields = ('id', 'title', 'owner', 'owner_username', 'category', 'category_name', 'preview')
 
     def to_representation(self, instance):
         repr = super().to_representation(instance)
@@ -33,7 +34,7 @@ class PostListSerializer(serializers.ModelSerializer):
 class PostCreateSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(required=True, queryset=Category.objects.all())
     owner = serializers.ReadOnlyField(source='owner.id')
-    images = PostImageSerializer(many=True, required=False)
+    # images = PostImageSerializer(many=True, required=False)
 
     class Meta:
         model = Post
@@ -41,17 +42,17 @@ class PostCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context.get('request')
-        images = request.FILES.getlist('images')
+        # images = request.FILES.getlist('images')
         post = Post.objects.create(**validated_data)
-        for image in images:
-            Post.objects.create(image=image, post=post)
+        # for image in images:
+        #     Post.objects.create(image=image, post=post)
         return post
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
     owner_username = serializers.ReadOnlyField(source='owner.username')
     category_name = serializers.ReadOnlyField(source='category.name')
-    images = PostImageSerializer(many=True)
+    # images = PostImageSerializer(many=True)
 
     class Meta:
         model = Post
