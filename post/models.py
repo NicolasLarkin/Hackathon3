@@ -18,3 +18,6 @@ class Post(models.Model):
         ordering = ['id', ]
 
 
+
+
+
