@@ -1,8 +1,5 @@
 amqp==5.1.1
 asgiref==3.7.2
-<<<<<<< HEAD
-Django==4.2.3
-=======
 async-timeout==4.0.2
 billiard==4.1.0
 celery==5.3.1
@@ -17,7 +14,6 @@ coreschema==0.0.4
 Django==4.2.2
 django-ckeditor==6.5.1
 django-cors-headers==4.1.0
->>>>>>> 41f3c0d65f7cf7302a1746914f10115f03215562
 django-filter==23.2
 django-js-asset==2.0.0
 djangorestframework==3.14.0

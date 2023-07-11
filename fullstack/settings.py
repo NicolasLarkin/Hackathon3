@@ -1,7 +1,7 @@
 from datetime import timedelta
 from pathlib import Path
 from decouple import config
-from datetime import timedelta
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -102,18 +102,20 @@ USE_I18N = True
 USE_TZ = True
 
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
+
 STATIC_URL = 'static/'
 
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTH_USER_MODEL = 'account.CustomUser'
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 41f3c0d65f7cf7302a1746914f10115f03215562
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -155,7 +157,6 @@ SIMPLE_JWT = {
     "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
     "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
 }
-
 
 REDIS_HOST = 'localhost'
 REDIS_PORT = '6379'
