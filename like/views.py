@@ -1,7 +1,8 @@
 from rest_framework import generics, permissions
 from .models import Like
 from . import serializers
-from posts.permissions import IsAuthor
+from post.permissions import IsAuthor
+
 
 class LikeCreateView(generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticated, )
