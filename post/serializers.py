@@ -1,7 +1,10 @@
+from django.db.models import Sum
 from rest_framework import serializers
 from category.models import Category
+from rating.serializers import MarkSerializer
 from .models import Post
 from comment.serializers import CommentSerializer
+from django.db.models import Avg
 
 
 class PostImageSerializer(serializers.ModelSerializer):
@@ -13,11 +16,12 @@ class PostImageSerializer(serializers.ModelSerializer):
 class PostListSerializer(serializers.ModelSerializer):
     owner_username = serializers.ReadOnlyField(source='owner.username')
     category_name = serializers.ReadOnlyField(source='category.name')
+
     # images = PostImageSerializer(many=True)
 
     class Meta:
         model = Post
-        fields = ('id', 'title', 'owner', 'owner_username', 'category', 'category_name', 'preview')
+        fields = ('id', 'title', 'owner', 'owner_username', 'category', 'category_name')
 
     def to_representation(self, instance):
         repr = super().to_representation(instance)
@@ -34,6 +38,7 @@ class PostListSerializer(serializers.ModelSerializer):
 class PostCreateSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(required=True, queryset=Category.objects.all())
     owner = serializers.ReadOnlyField(source='owner.id')
+
     # images = PostImageSerializer(many=True, required=False)
 
     class Meta:
@@ -52,6 +57,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
 class PostDetailSerializer(serializers.ModelSerializer):
     owner_username = serializers.ReadOnlyField(source='owner.username')
     category_name = serializers.ReadOnlyField(source='category.name')
+
     # images = PostImageSerializer(many=True)
 
     class Meta:
@@ -63,9 +69,13 @@ class PostDetailSerializer(serializers.ModelSerializer):
         repr['comments_count'] = instance.comments.count()
         repr['comments'] = CommentSerializer(instance.comments.all(), many=True).data
         repr['likes_count'] = instance.likes.count()
+        repr['marks'] = MarkSerializer(instance.marks.all(), many=True).data
+        repr['marks_count'] = instance.marks.count()
+        marks_count = instance.marks.count()
+        total_marks = instance.marks.aggregate(total=Avg('mark'))['total']
+        repr['rating'] = total_marks
         user = self.context['request'].user
         if user.is_authenticated:
             repr['is_liked'] = user.likes.filter(post=instance).exists()
             repr['is_favorite'] = user.favorites.filter(post=instance).exists()
         return repr
-

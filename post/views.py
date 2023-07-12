@@ -4,6 +4,9 @@ from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from functools import wraps
+
+from comment.serializers import CommentSerializer
 # from comment.serializers import CommentSerializer
 from like.models import Favorite
 from like.serializers import LikeUserSerializer
@@ -27,6 +30,10 @@ class PostViewSet(ModelViewSet):
     search_fields = ('title', 'body')
     filterset_fields = ('owner', 'category',)
 
+    @method_decorator(cache_page(60 * 60 * 2))
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
@@ -44,13 +51,14 @@ class PostViewSet(ModelViewSet):
             return [IsAuthor(), ]
         return [permissions.IsAuthenticatedOrReadOnly(), ]
 
-    # @action(['GET'], detail=True)
-    # def comments(self, request, pk):
-    #     post = self.get_object()
-    #     comments = post.comments.all()
-    #     serializer = CommentSerializer(instance=comments, many=True)
-    #     return Response(serializer.data, status=200)
+    @action(['GET'], detail=True)
+    def comments(self, request, pk):
+        post = self.get_object()
+        comments = post.comments.all()
+        serializer = CommentSerializer(instance=comments, many=True)
+        return Response(serializer.data, status=200)
 
+    # @method_decorator(cache_page(60 * 60 * 2))
     @action(['POST'], detail=True)
     def likes(self):
         post = self.get_object()
@@ -66,11 +74,10 @@ class PostViewSet(ModelViewSet):
         favorite = user.favorites.filter(post=post)
         if request.method == 'POST':
             if user.favorites.exists():
-                return Response({'msg':'Already in Favorite'})
+                return Response({'msg': 'Already in Favorite'})
             Favorite.objects.create(owner=user, post=post)
             return Response({'msg': 'Added to favorites'}, status=201)
         if favorite.exists():
             favorite.delete()
             return Response({'msg', 'Deleted From Favorite'}, status=204)
         return Response({'msg': 'Post Not Found in Favorite'}, status=404)
-

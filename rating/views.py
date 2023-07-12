@@ -16,4 +16,4 @@ class MarkCreateView(generics.CreateAPIView):
 
 class MarkDeleteView(generics.DestroyAPIView):
     queryset = Mark.objects.all()
-    permission_classes = (IsAuthor,)
+    permission_classes = (IsAuthor, )

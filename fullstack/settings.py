@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'post',
     'like',
     'comment',
+    'rating',
 ]
 
 MIDDLEWARE = [
@@ -171,9 +172,9 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-#         'LOCATION': BASE_DIR / 'cache/',
-#     }
-# }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': BASE_DIR / 'cache/',
+    }
+}
