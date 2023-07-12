@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -56,6 +58,7 @@ class PostViewSet(ModelViewSet):
         serializer = LikeUserSerializer(instance=likes, many=True)
         return Response(serializer.data, status=200)
 
+    # @method_decorator(cache_page(60 * 60 * 2))
     @action(['POST', 'DELETE'], detail=True)
     def favorites(self, request, pk):
         post = self.get_object()
