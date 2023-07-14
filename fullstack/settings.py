@@ -181,11 +181,21 @@ SWAGGER_SETTINGS = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "https://domain.com",
-    "https://api.domain.com",
     "http://localhost:8080",
-    "http://127.0.0.1:9000"
+    "http://127.0.0.1:9000",
+    'http://localhost:3000',
+    'http://localhost:3001',
+    "http://127.0.0.1:3000"
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8080",
+    "http://127.0.0.1:9000",
+    'http://localhost:3000',
+    'http://localhost:3001',
+    "http://127.0.0.1:3000"
+]
+
 
 REDIS_HOST = 'redis'
 REDIS_PORT = '6379'
