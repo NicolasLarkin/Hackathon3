@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_yasg',
     'ckeditor',
+    'django_rest_passwordreset',
 
     # my_apps
     'account',
@@ -198,7 +199,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 
-REDIS_HOST = 'redis'
+REDIS_HOST = 'localhost'
 REDIS_PORT = '6379'
 
 CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
