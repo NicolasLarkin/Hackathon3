@@ -1,0 +1,11 @@
+DB_NAME=fullstack
+DB_USER=user
+DB_PASSWORD=1
+ALLOWED_HOSTS='*'
+DEBUG=True
+DB_PORT=5432
+DB_HOST='127.0.0.1'
+SECRET='django-insecure-hyowdtc4)1cgw_etnt9phu2b(+z7ht#zv_cnvcn-th&l^&+ea='
+
+EMAIL_HOST_USER=hackathon619@gmail.com
+EMAIL_HOST_PASSWORD=bjsricaidahawqqz
