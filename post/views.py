@@ -19,7 +19,7 @@ from rest_framework.filters import SearchFilter
 
 
 class StandardResultPagination(PageNumberPagination):
-    page_size = 49
+    page_size = 45
     page_query_param = 'page'
 
 
@@ -38,9 +38,9 @@ class PostViewSet(ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_serializer_class(self):
-        if self.action == 'list':
-            return serializers.PostListSerializer
-        elif self.action in ('create', 'update', 'partial_update'):
+        # if self.action == 'list':
+        #     return serializers.PostListSerializer
+        if self.action in ('create', 'update', 'partial_update'):
             return serializers.PostCreateSerializer
         return serializers.PostDetailSerializer
 
