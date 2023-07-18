@@ -19,7 +19,7 @@ from rest_framework.filters import SearchFilter
 
 
 class StandardResultPagination(PageNumberPagination):
-    page_size = 3
+    page_size = 49
     page_query_param = 'page'
 
 
@@ -27,7 +27,7 @@ class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     pagination_class = StandardResultPagination
     filter_backends = (DjangoFilterBackend, SearchFilter)
-    search_fields = ('title', 'body')
+    search_fields = ('title', )
     filterset_fields = ('owner', 'category',)
 
     @method_decorator(cache_page(60 * 60 * 2))
