@@ -11,6 +11,7 @@ DEBUG = config('DEBUG', cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(' ')
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -91,7 +92,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
@@ -178,3 +179,4 @@ CACHES = {
         'LOCATION': BASE_DIR / 'cache/',
     }
 }
+
