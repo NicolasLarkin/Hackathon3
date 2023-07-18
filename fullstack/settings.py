@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'like',
     'comment',
     'rating',
+    'payment',
+
 ]
 
 MIDDLEWARE = [
@@ -49,6 +51,25 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": "information.log",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    },
+}
 
 ROOT_URLCONF = 'fullstack.urls'
 
@@ -215,3 +236,8 @@ CACHES = {
         'LOCATION': BASE_DIR / 'cache/',
     }
 }
+
+
+PAYPAL_MODE = 'sandbox'  # 'sandbox' для тестовой среды, 'live' для рабочей среды
+PAYPAL_CLIENT_ID = 'AZh1pQzDlTNNeQnRBTF3VfxnmHuUo11JD_oNx_VNXEN3noqnBSj2YS6Rhq29lypXxfH8ecuIB-6JO7h1'
+PAYPAL_CLIENT_SECRET = 'AZh1pQzDlTNNeQnRBTF3VfxnmHuUo11JD_oNx_VNXEN3noqnBSj2YS6Rhq29lypXxfH8ecuIB-6JO7h1'

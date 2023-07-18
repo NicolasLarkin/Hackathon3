@@ -7,6 +7,7 @@ from account import serializers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.response import Response
 from fullstack.tasks import send_confirmation_email_task
+from django.shortcuts import redirect
 
 
 User = get_user_model()
@@ -41,7 +42,7 @@ class UserViewSet(ListModelMixin, GenericViewSet):
         user.is_active = True
         user.activation_code = ''
         user.save()
-        return Response({'msg': 'Successfully activated!'}, status=200)
+        return redirect("http://127.0.0.1:4000/accounts/login/")
 
 
 class LoginView(TokenObtainPairView):
