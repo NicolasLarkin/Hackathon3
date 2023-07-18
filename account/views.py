@@ -42,7 +42,7 @@ class UserViewSet(ListModelMixin, GenericViewSet):
         user.is_active = True
         user.activation_code = ''
         user.save()
-        return redirect("http://34.159.244.62/accounts/login/")
+        return redirect("http://localhost:3000/login/")
 
 
 class LoginView(TokenObtainPairView):

@@ -163,3 +163,6 @@ Not Found: /favicon.ico
 Watching for file changes with StatReloader
 /home/stateonuris/Python/makers/Hakaton/pinterest/Hackathon3/account/views.py changed, reloading.
 Watching for file changes with StatReloader
+"GET /admin/account/ HTTP/1.1" 200 13298
+/home/stateonuris/Python/makers/Hakaton/pinterest/Hackathon3/account/views.py changed, reloading.
+Watching for file changes with StatReloader
