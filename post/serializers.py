@@ -20,6 +20,12 @@ class PostListSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         repr['is_liked'] = user.likes.filter(post=instance).exists() if user.is_authenticated else False
         repr['is_favorite'] = user.favorites.filter(post=instance).exists() if user.is_authenticated else False
+        repr['favorites_count'] = instance.favorites.count()
+        user = self.context['request'].user
+        if user.is_authenticated:
+            repr['is_owner'] = user.posts.filter(post=instance).exists()
+            repr['is_liked'] = user.likes.filter(post=instance).exists()
+            repr['is_favorite'] = user.favorites.filter(post=instance).exists()
         return repr
 
 
@@ -38,6 +44,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
 class PostDetailSerializer(serializers.ModelSerializer):
     user_username = serializers.ReadOnlyField(source='user.username')
     category_name = serializers.ReadOnlyField(source='category.name')
+    owner = serializers.ReadOnlyField(source='owner.id')
 
     class Meta:
         model = Post
@@ -48,6 +55,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
         repr['comments_count'] = instance.comments.count()
         repr['comments'] = CommentSerializer(instance.comments.all(), many=True).data
         repr['likes_count'] = instance.likes.count()
+        repr['favorites_count'] = instance.favorite.count()
         repr['marks'] = MarkSerializer(instance.marks.all(), many=True).data
         repr['marks_count'] = instance.marks.count()
         marks_count = instance.marks.count()
@@ -56,4 +64,8 @@ class PostDetailSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         repr['is_liked'] = user.likes.filter(post=instance).exists() if user.is_authenticated else False
         repr['is_favorite'] = user.favorites.filter(post=instance).exists() if user.is_authenticated else False
+        if user.is_authenticated:
+            repr['is_owner'] = instance.owner == user
+            repr['is_liked'] = user.likes.filter(post=instance).exists()
+            repr['is_favorite'] = user.favorites.filter(post=instance).exists()
         return repr

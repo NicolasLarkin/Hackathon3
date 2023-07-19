@@ -16,7 +16,7 @@ from like.serializers import LikeUserSerializer
 
 
 class StandardResultPagination(PageNumberPagination):
-    page_size = 3
+    page_size = 45
     page_query_param = 'page'
 
 
@@ -27,7 +27,7 @@ class PostViewSet(ModelViewSet):
     search_fields = ('title',)
     filterset_fields = ('user', 'category',)
 
-    @method_decorator(cache_page(60 * 60 * 2))
+
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
@@ -40,6 +40,10 @@ class PostViewSet(ModelViewSet):
         elif self.action in ('create', 'update', 'partial_update'):
             return PostCreateSerializer
         return PostDetailSerializer
+            return serializers.PostDetailSerializer
+        if self.action in ('create', 'update', 'partial_update'):
+            return serializers.PostCreateSerializer
+        return serializers.PostDetailSerializer
 
     def get_permissions(self):
         if self.action == 'destroy':
@@ -79,3 +83,13 @@ class PostViewSet(ModelViewSet):
             return Response({'msg': 'Deleted From Favorite'}, status=204)
         return Response({'msg': 'Post Not Found in Favorite'}, status=404)
 
+    # @method_decorator(cache_page(60 * 60 * 2))
+    @action(['GET'], detail=True)
+    def favorites(self, request, pk):
+        post = self.get_object()
+        user = request.user
+        if Favorite.objects.filter(post=post, owner=user).exists():
+            Favorite.objects.filter(post=post, owner=user).delete()
+        else:
+            Favorite.objects.create(post=post, owner=user)
+        return Response("favorite toggled", 200)

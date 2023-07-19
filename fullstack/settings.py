@@ -11,6 +11,7 @@ DEBUG = config('DEBUG', cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(' ')
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -22,10 +23,11 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
+    # 'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'drf_yasg',
     'ckeditor',
+    'django_rest_passwordreset',
 
     # my_apps
     'account',
@@ -36,6 +38,8 @@ INSTALLED_APPS = [
     'comment',
     'subscribe',
     'rating',
+    'payment',
+
 ]
 
 MIDDLEWARE = [
@@ -49,6 +53,25 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": "information.log",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    },
+}
 
 ROOT_URLCONF = 'fullstack.urls'
 
@@ -96,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
@@ -137,7 +160,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -216,3 +239,8 @@ CACHES = {
         'LOCATION': BASE_DIR / 'cache/',
     }
 }
+
+
+PAYPAL_MODE = 'sandbox'  # 'sandbox' для тестовой среды, 'live' для рабочей среды
+PAYPAL_CLIENT_ID = 'AZh1pQzDlTNNeQnRBTF3VfxnmHuUo11JD_oNx_VNXEN3noqnBSj2YS6Rhq29lypXxfH8ecuIB-6JO7h1'
+PAYPAL_CLIENT_SECRET = 'AZh1pQzDlTNNeQnRBTF3VfxnmHuUo11JD_oNx_VNXEN3noqnBSj2YS6Rhq29lypXxfH8ecuIB-6JO7h1'

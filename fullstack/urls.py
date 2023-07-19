@@ -31,8 +31,7 @@ urlpatterns = [
     path('likes/', include('like.urls')),
     path('accounts/', include('account.urls')),
     path('followers/', include('subscribe.urls')),
+    path('payment/', include('payment.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-print('hi')
