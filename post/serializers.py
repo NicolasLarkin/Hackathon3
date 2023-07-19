@@ -27,8 +27,6 @@ class PostListSerializer(serializers.ModelSerializer):
         repr = super().to_representation(instance)
         repr['comments_count'] = instance.comments.count()
         repr['favorites_count'] = instance.favorites.count()
-        repr = super().to_representation(instance)
-        repr['comments_count'] = instance.comments.count()
         user = self.context['request'].user
         if user.is_authenticated:
             repr['is_owner'] = user.posts.filter(post=instance).exists()
@@ -80,7 +78,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
         repr['rating'] = total_marks
         user = self.context['request'].user
         if user.is_authenticated:
-            repr['is_owner'] = user.posts.filter(post=instance).exists()
+            repr['is_owner'] = instance.owner == user
             repr['is_liked'] = user.likes.filter(post=instance).exists()
             repr['is_favorite'] = user.favorites.filter(post=instance).exists()
         return repr
