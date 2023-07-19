@@ -1,10 +1,11 @@
+from django.core.exceptions import FieldError
 from django.http import Http404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from subscribe.models import Profile
 from subscribe.serializers import FollowerSerializer, BlockPendinSerializer
 from rest_framework.response import Response
+from account.models import CustomUser
 
 
 class FollowUnfollowView(APIView):
@@ -12,14 +13,14 @@ class FollowUnfollowView(APIView):
 
     def current_profile(self):
         try:
-            return Profile.objects.get(user=self.request.user)
-        except Profile.DoesNotExist:
+            return CustomUser.objects.get(id=self.request.user.id)
+        except CustomUser.DoesNotExist:
             raise Http404
 
     def other_profile(self, pk):
         try:
-            return Profile.objects.get(id=pk)
-        except Profile.DoesNotExist:
+            return CustomUser.objects.get(id=pk)
+        except CustomUser.DoesNotExist:
             raise Http404
 
     def post(self, request, format=None):
@@ -28,6 +29,8 @@ class FollowUnfollowView(APIView):
         req_type = request.data.get('type')
 
         current_profile = self.current_profile()
+        if current_profile is None:
+            return Response({'msg: Вы не авторизованы'})
         other_profile = self.other_profile(pk)
 
         if req_type == 'follow':
@@ -37,7 +40,7 @@ class FollowUnfollowView(APIView):
             else:
                 if other_profile.blocked_user.filter(id=current_profile.id).exists():
                     return Response(
-                        {"Following Fail": "You can not follow this profile becuase your ID blocked by this user!!"},
+                        {"Following Fail": "You can not follow this profile because your ID blocked by this user!!"},
                         status=status.HTTP_400_BAD_REQUEST)
                 current_profile.following.add(other_profile)
                 other_profile.followers.add(current_profile)
@@ -75,9 +78,10 @@ class FollowUnfollowView(APIView):
 
         elif req_type == 'block_pending':
             serializer = BlockPendinSerializer(self.current_profile())
-            pf = list(Profile.objects.filter(panding_request=self.current_profile().id).values('id', 'user__username',
-                                                                                               'profile_pic',
-                                                                                               'overall_pr'))
+            pf = list(
+                CustomUser.objects.filter(panding_request=self.current_profile().id).values('id', 'user__username',
+                                                                                            'profile_pic',
+                                                                                            'overall_pr'))
             return Response({"data": serializer.data, "Sended Request": pf}, status=status.HTTP_200_OK)
 
     # You can block and unblock user
@@ -92,4 +96,3 @@ class FollowUnfollowView(APIView):
         elif req_type == 'unblock':
             self.current_profile().blocked_user.remove(self.other_profile(pk))
             return Response({"Unblocked": "This user unblocked successfuly"}, status=status.HTTP_200_OK)
-

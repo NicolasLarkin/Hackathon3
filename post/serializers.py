@@ -1,58 +1,43 @@
 from rest_framework import serializers
 from category.models import Category
-from .models import Post
+from rating.serializers import MarkSerializer
 from comment.serializers import CommentSerializer
-
-
-class PostImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Post
-        fields = '__all__'
+from django.db.models import Avg
+from post.models import Post
 
 
 class PostListSerializer(serializers.ModelSerializer):
-    owner_username = serializers.ReadOnlyField(source='owner.username')
+    user_username = serializers.ReadOnlyField(source='user.username')
     category_name = serializers.ReadOnlyField(source='category.name')
-    # images = PostImageSerializer(many=True)
 
     class Meta:
         model = Post
-        fields = ('id', 'title', 'owner', 'owner_username', 'category', 'category_name')
+        fields = ('id', 'title', 'user_username', 'category_name', 'post')
 
     def to_representation(self, instance):
         repr = super().to_representation(instance)
         repr['comments_count'] = instance.comments.count()
-        repr = super().to_representation(instance)
-        repr['comments_count'] = instance.comments.count()
         user = self.context['request'].user
-        if user.is_authenticated:
-            repr['is_liked'] = user.likes.filter(post=instance).exists()
-            repr['is_favorite'] = user.favorites.filter(post=instance).exists()
+        repr['is_liked'] = user.likes.filter(post=instance).exists() if user.is_authenticated else False
+        repr['is_favorite'] = user.favorites.filter(post=instance).exists() if user.is_authenticated else False
         return repr
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(required=True, queryset=Category.objects.all())
-    owner = serializers.ReadOnlyField(source='owner.id')
-    # images = PostImageSerializer(many=True, required=False)
 
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = ('category', 'title', 'post')
 
     def create(self, validated_data):
-        request = self.context.get('request')
-        # images = request.FILES.getlist('images')
         post = Post.objects.create(**validated_data)
-        # for image in images:
-        #     Post.objects.create(image=image, post=post)
         return post
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
-    owner_username = serializers.ReadOnlyField(source='owner.username')
+    user_username = serializers.ReadOnlyField(source='user.username')
     category_name = serializers.ReadOnlyField(source='category.name')
-    # images = PostImageSerializer(many=True)
 
     class Meta:
         model = Post
@@ -63,9 +48,12 @@ class PostDetailSerializer(serializers.ModelSerializer):
         repr['comments_count'] = instance.comments.count()
         repr['comments'] = CommentSerializer(instance.comments.all(), many=True).data
         repr['likes_count'] = instance.likes.count()
+        repr['marks'] = MarkSerializer(instance.marks.all(), many=True).data
+        repr['marks_count'] = instance.marks.count()
+        marks_count = instance.marks.count()
+        total_marks = instance.marks.aggregate(total=Avg('mark'))['total']
+        repr['rating'] = total_marks
         user = self.context['request'].user
-        if user.is_authenticated:
-            repr['is_liked'] = user.likes.filter(post=instance).exists()
-            repr['is_favorite'] = user.favorites.filter(post=instance).exists()
+        repr['is_liked'] = user.likes.filter(post=instance).exists() if user.is_authenticated else False
+        repr['is_favorite'] = user.favorites.filter(post=instance).exists() if user.is_authenticated else False
         return repr
-

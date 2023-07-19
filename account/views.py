@@ -1,19 +1,16 @@
-from django.contrib.auth import get_user_model
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import ListModelMixin
 from account import serializers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.response import Response
 from fullstack.tasks import send_confirmation_email_task
-
-
-User = get_user_model()
+from account.models import CustomUser
 
 
 class UserViewSet(ListModelMixin, GenericViewSet):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = serializers.UserSerializer
     permission_classes = (AllowAny, )
 
@@ -34,8 +31,8 @@ class UserViewSet(ListModelMixin, GenericViewSet):
     @action(['GET'], detail=False, url_path='activate/(?P<uuid>[0-9A-Fa-f-]+)')
     def activate(self, request, uuid):
         try:
-            user = User.objects.get(activation_code=uuid)
-        except User.DoesNotExists:
+            user = CustomUser.objects.get(activation_code=uuid)
+        except CustomUser.DoesNotExists:
             return Response({'msg': 'Invalid link or link does not expired!'}, status=400)
 
         user.is_active = True
@@ -51,3 +48,14 @@ class LoginView(TokenObtainPairView):
 class RefreshView(TokenRefreshView):
     permission_classes = (AllowAny, )
 
+
+class ProfileDetailView(GenericViewSet):
+    permission_classes = [IsAuthenticated, ]
+    queryset = CustomUser.objects.all()
+    serializer_class = serializers.ProfileDetailSerializer
+
+    @action(detail=True, methods=['GET'])
+    def profile_details(self, request, pk=None):
+        profile = self.get_object()
+        serializer = self.get_serializer(profile)
+        return Response(serializer.data)

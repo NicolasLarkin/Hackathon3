@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from .models import Profile
+from account.models import CustomUser
 
 
 class EachUserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')
 
     class Meta:
-        model = Profile
+        model = CustomUser
         fields = ('id', 'username', 'profile_pic')
         read_only_fields = ('id', 'username', 'profile_pic')
 
@@ -16,7 +16,7 @@ class FollowerSerializer(serializers.ModelSerializer):
     following = EachUserSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Profile
+        model = CustomUser
         fields = ('followers', 'following')
         read_only_fields = ('followers', 'following')
 
@@ -26,6 +26,8 @@ class BlockPendinSerializer(serializers.ModelSerializer):
     blocked_user = EachUserSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Profile
+        model = CustomUser
         fields = ('panding_request', 'blocked_user')
         read_only_fields = ('panding_request', 'blocked_user')
+
+
