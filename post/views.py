@@ -38,8 +38,8 @@ class PostViewSet(ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_serializer_class(self):
-        # if self.action == 'list':
-        #     return serializers.PostListSerializer
+        if self.action == 'list':
+            return serializers.PostDetailSerializer
         if self.action in ('create', 'update', 'partial_update'):
             return serializers.PostCreateSerializer
         return serializers.PostDetailSerializer
@@ -67,17 +67,12 @@ class PostViewSet(ModelViewSet):
         return Response(serializer.data, status=200)
 
     # @method_decorator(cache_page(60 * 60 * 2))
-    @action(['POST', 'DELETE'], detail=True)
+    @action(['GET'], detail=True)
     def favorites(self, request, pk):
         post = self.get_object()
         user = request.user
-        favorite = user.favorites.filter(post=post)
-        if request.method == 'POST':
-            if user.favorites.exists():
-                return Response({'msg': 'Already in Favorite'})
-            Favorite.objects.create(owner=user, post=post)
-            return Response({'msg': 'Added to favorites'}, status=201)
-        if favorite.exists():
-            favorite.delete()
-            return Response({'msg', 'Deleted From Favorite'}, status=204)
-        return Response({'msg': 'Post Not Found in Favorite'}, status=404)
+        if Favorite.objects.filter(post=post, owner=user).exists():
+            Favorite.objects.filter(post=post, owner=user).delete()
+        else:
+            Favorite.objects.create(post=post, owner=user)
+        return Response("favorite toggled", 200)
