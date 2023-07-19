@@ -1,13 +1,12 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-
-User = get_user_model()
+from account.models import CustomUser
+from post.serializers import PostListSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = CustomUser
         exclude = ('password',)
 
 
@@ -16,7 +15,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(max_length=20, min_length=8, required=True, write_only=True)
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ('email', 'password', 'password2', 'first_name', 'last_name', 'avatar', 'username')
 
     def validate(self, attrs):
@@ -28,7 +27,25 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
+        user = CustomUser.objects.create_user(**validated_data)
         return user
 
 
+class ProfileDetailSerializer(serializers.ModelSerializer):
+    posts = PostListSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'first_name', 'last_name', 'private_account', 'created_date', 'avatar', 'posts')
+
+    def to_representation(self, instance):
+        repr = super().to_representation(instance)
+        repr['followers_count'] = instance.followers.count()
+        repr['following_count'] = instance.following.count()
+        return repr
+
+    def get_followers_count(self, instance):
+        return instance.followers.count()
+
+    def get_following_count(self, instance):
+        return instance.following.count()

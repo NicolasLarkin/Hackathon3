@@ -11,6 +11,7 @@ class LikeCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+
 class LikeDeleteView(generics.DestroyAPIView):
     queryset = Like.objects.all()
     permission_classes = (IsAuthor, )

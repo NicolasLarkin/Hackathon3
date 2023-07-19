@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'post',
     'like',
     'comment',
+    'subscribe',
     'rating',
     'payment',
 
@@ -200,6 +201,7 @@ SWAGGER_SETTINGS = {
             'in': 'header'
     },
 },
+
     'USE_SESSION_AUTH' : False
 }
 
